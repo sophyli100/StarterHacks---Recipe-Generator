@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <link href = "/css/recipe.css" type = "text/css" rel = "stylesheet" >
+    <title>Right Now Recipes!</title>
+</head>
+<body>
+        <script src = 'https://code.jquery.com/jquery-2.2.4.js'>
+        </script>
+        <script>
+            var title;
+            var matchValues;
+            var url;
+            var thumbnail;
+            var url1 = 'http://www.recipepuppy.com/api/?i=';
+            var url3 = '&callback=somefunc';
+            var url2 = '';
+            var data2;
+            var userIngred = [];
+            var min1 = 100; 
+            var min1I;
+            var min2 = 100; 
+            var min2I;
+            var min3 = 100;
+            var min3I;
+            $.get( "/ingredInput", function( data2 ) 
+            { 
+                var dataString = Object.keys(data2);
+                var lastKey = dataString[dataString.length - 1];
+                var stringSplit = data2[lastKey].ingredInput;
+                $.getScript(url1 + stringSplit + url3);
+                userIngred=stringSplit.split(",");
+
+
+            });  
+
+            function somefunc (data) {
+                console.log(data);
+                matchValues = new Array(10);
+                title = new Array(10);
+                url = new Array(10);
+                thumbnail = new Array(10);
+                for(x = 0; x < 10; x++)
+                {
+                    var ingred = new Array(10);
+                    
+
+                    //console.log(data);
+                    ingred = data['results'][x]['ingredients'].split(", ");
+                    title[x] = data['results'][x]['title'];
+                    //console.log(title[4]);
+                    url[x] = data['results'][x]['href'];
+                    thumbnail[x] = data['results'][x]['thumbnail'];
+                        var notMatches = 0;
+                        for (y = 0; y < ingred.length; y++)
+                        {
+                            var badcount = 0;
+                            for (z = 0; z < userIngred.length; z++)
+                            {
+                                if (ingred[y] != userIngred[z])
+                                {
+                                    badcount ++;
+                                }
+                            }
+                            if (badcount == userIngred.length)
+                            {
+                                notMatches ++;
+                            }
+                        }
+                        matchValues[x] = notMatches;
+                    }
+                
+                for (i = 0; i < matchValues.length; i ++ )
+                {
+                    if (matchValues[i] < min1)
+                    {
+                        min1 = matchValues[i];
+                        min1I = i;
+                    }
+                    else if (matchValues[i] < min2)
+                    {
+                        min2 = matchValues[i];
+                        min2I = i;
+                    }
+                    else if (matchValues[i] < min3)
+                    {
+                        min3 = matchValues[i];
+                        min3I = i;
+                    }
+
+                }
+                console.log(title[min1I]);
+                console.log(url[min1I]);
+
+                console.log(title[min2I]);
+                console.log(url[min2I]);
+
+                console.log(title[min3I]);
+                console.log(url[min3I]);
+            }
+        </script>
+    <header>
+        <div class = "header">
+            <h1 id = "mainHead">Right Now Recipes!</h1>
+            <h2 id = "subHead">Extra food in your fridge? Find a recipe!</h2>
+        </div>
+    </header>
+    <div id = "input">
+        <form action="messages">
+          <label for="ingredInput">Enter ingredients, seperated by commas with no spaces! </label>
+          <input type="text" name="ingredInput" placeholder="Eggs,tomatoes,carrot...">
+          <input type="submit" value="Submit">
+        </form>
+    </div>
+    <button onclick="myFunction()">Get Recipes!</button>
+    <p id="display1"></p>
+    <p id="display2"></p>
+    <p id="display3"></p>
+    <p id="display4"></p>
+    <p id="display5"></p>
+    <p id="display6"></p>
+    <script>
+    function myFunction()
+        {
+            document.getElementById("display1").innerHTML = title[min1I];
+            var str1 = "click here!";
+            var result1 = str1.link(url[min1I]);
+            document.getElementById("display2").innerHTML = result1;
+
+            document.getElementById("display3").innerHTML = title[min2I];
+            var str2 = "click here!";
+            var result2 = str2.link(url[min2I]);
+            document.getElementById("display4").innerHTML = result2;
+
+            document.getElementById("display5").innerHTML = title[min3I];
+            var str3 = "click here!";
+            var result3 = str3.link(url[min3I]);
+            document.getElementById("display6").innerHTML = result3;
+        }
+    </script>
+    <!--<div id="myDiv" style="display:none;" class="display" >WELCOME</div>
+    <input type="button" name="Get Recipes!" onclick="ShowDiv()" />
+    <button type = "button" onclick = title[0]> Submit </button> -->
+</body>
+</html>
